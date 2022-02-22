@@ -53,3 +53,11 @@ When you come to see us you will need to consider the following so that we can c
   ```bash
   curl https://raw.githubusercontent.com/MiddlewareNewZealand/evaluation-instructions/main/xml-api/2.xml
   ```
+  ```
+  <?xml version="1.0" encoding="UTF-8"?>
+  <Data>
+          <id>1</id>
+          <name>MWNZ</name>
+          <description>..is awesome</description>
+  </Data>
+  ```
