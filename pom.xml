@@ -37,6 +37,13 @@
 			<artifactId>openapi-generator</artifactId>
 			<version>5.4.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.openapitools/openapi-generator-core -->
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>openapi-generator-core</artifactId>
+			<version>5.4.0</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

@@ -1,19 +1,25 @@
 package nz.middleware.evaluationinstructions;
 
 import nz.middleware.evaluationinstructions.model.Company;
+import nz.middleware.evaluationinstructions.model.Error;
 import nz.middleware.evaluationinstructions.model.XmlCompany;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Arrays;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.List;
 
 @RestController
 public class CompaniesService {
@@ -21,18 +27,23 @@ public class CompaniesService {
 
     @Autowired
     private RestTemplate restTemplate;
+
     @Value("${xml.service.url}")
     private String serviceUrl;
 
 
     @GetMapping("/companies/{id}")
     public Company getCompany(@PathVariable("id") Integer id) {
-
         XmlCompany xmlCompany = getXmlCompany(id);
-        if (xmlCompany != null) {
-            return new Company().id(xmlCompany.getId()).description(xmlCompany.getDescription()).name(xmlCompany.getName());
-        }
-        return null;
+        return new Company().id(xmlCompany.getId()).description(xmlCompany.getDescription()).name(xmlCompany.getName());
+    }
+
+    @ExceptionHandler({HttpClientErrorException.class, ResponseStatusException.class})
+    public Error handleNotFoundException(Exception ex, WebRequest request) {
+        StringWriter sw = new StringWriter();
+        ex.printStackTrace(new PrintWriter(sw));
+
+        return new Error().error(ex.getMessage()).errorDescription(sw.toString());
     }
 
     /**
@@ -42,8 +53,7 @@ public class CompaniesService {
     private XmlCompany getXmlCompany(Integer id) {
 
         HttpHeaders headers = new HttpHeaders();
-
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_XML));
+        headers.setAccept(List.of(MediaType.APPLICATION_XML));
         // Request to return XML format
         headers.setContentType(MediaType.APPLICATION_XML);
 
@@ -59,7 +69,6 @@ public class CompaniesService {
         if (statusCode == HttpStatus.OK) {
             return response.getBody();
         } else {
-            LOGGER.error("Could not retrieve XmlCompany {} status code {}", id, response.getStatusCode());
             throw new ResponseStatusException(statusCode, "Could not retrieve XmlCompany " + id);
         }
     }
