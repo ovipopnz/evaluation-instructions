@@ -15,10 +15,10 @@ import java.util.Map;
 
 
 @SpringBootApplication
-public class EvaluationInstructionsApplication {
+public class Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(EvaluationInstructionsApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 
     @Bean
@@ -28,6 +28,7 @@ public class EvaluationInstructionsApplication {
         XStreamMarshaller marshaller = new XStreamMarshaller();
         marshaller.setAliasesByType(Map.of(rootElement, XmlCompany.class));
 
+        // converter is needed for XML content served as PLAIN TEXT
         MarshallingHttpMessageConverter marshallingConverter =
                 new MarshallingHttpMessageConverter(marshaller);
         marshallingConverter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));

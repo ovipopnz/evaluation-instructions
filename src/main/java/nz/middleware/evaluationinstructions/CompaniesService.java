@@ -47,6 +47,7 @@ public class CompaniesService {
     }
 
     /**
+     * Retrieves the XmlCompany from the remote service.
      * @param id
      * @return
      */
