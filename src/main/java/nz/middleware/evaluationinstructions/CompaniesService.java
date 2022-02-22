@@ -1,28 +1,23 @@
 package nz.middleware.evaluationinstructions;
 
+import nz.middleware.evaluationinstructions.api.CompaniesApi;
 import nz.middleware.evaluationinstructions.model.Company;
-import nz.middleware.evaluationinstructions.model.Error;
 import nz.middleware.evaluationinstructions.model.XmlCompany;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
-@RestController
-public class CompaniesService {
+@Service
+public class CompaniesService implements CompaniesApi {
     public static final Logger LOGGER = LoggerFactory.getLogger(CompaniesService.class);
 
     @Autowired
@@ -31,20 +26,6 @@ public class CompaniesService {
     @Value("${xml.service.url}")
     private String serviceUrl;
 
-
-    @GetMapping("/companies/{id}")
-    public Company getCompany(@PathVariable("id") Integer id) {
-        XmlCompany xmlCompany = getXmlCompany(id);
-        return new Company().id(xmlCompany.getId()).description(xmlCompany.getDescription()).name(xmlCompany.getName());
-    }
-
-    @ExceptionHandler({HttpClientErrorException.class, ResponseStatusException.class})
-    public Error handleNotFoundException(Exception ex, WebRequest request) {
-        StringWriter sw = new StringWriter();
-        ex.printStackTrace(new PrintWriter(sw));
-
-        return new Error().error(ex.getMessage()).errorDescription(sw.toString());
-    }
 
     /**
      * Retrieves the XmlCompany from the remote service.
@@ -72,5 +53,11 @@ public class CompaniesService {
         } else {
             throw new ResponseStatusException(statusCode, "Could not retrieve XmlCompany " + id);
         }
+    }
+
+    @Override
+    public ResponseEntity<Company> companiesIdGet(BigDecimal id) {
+        XmlCompany xmlCompany = getXmlCompany(id.intValue());
+        return ResponseEntity.of(Optional.of(new Company().id(xmlCompany.getId()).description(xmlCompany.getDescription()).name(xmlCompany.getName())));
     }
 }

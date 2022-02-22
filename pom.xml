@@ -43,6 +43,12 @@
 			<artifactId>openapi-generator-core</artifactId>
 			<version>5.4.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.openapitools/jackson-databind-nullable -->
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>0.2.2</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 		<dependency>
@@ -119,12 +125,14 @@
 						</goals>
 						<configuration>
 							<inputSpec>${project.basedir}/src/main/resources/openapi-companies.yaml</inputSpec>
-							<generatorName>java</generatorName>
-							<generateApis>false</generateApis>
+							<generatorName>spring</generatorName>
+							<generateApis>true</generateApis>
 							<modelPackage>nz.middleware.evaluationinstructions.model</modelPackage>
+							<apiPackage>nz.middleware.evaluationinstructions.api</apiPackage>
 							<generateModelDocumentation>false</generateModelDocumentation>
 							<generateModelTests>false</generateModelTests>
-							<generateSupportingFiles>false</generateSupportingFiles>
+							<generateSupportingFiles>true</generateSupportingFiles>
+							<supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
 							<output>${project.basedir}/src/main/generated-sources</output>
 							<configOptions>
 								<sourceFolder>/</sourceFolder>
